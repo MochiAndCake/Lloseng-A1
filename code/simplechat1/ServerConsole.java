@@ -41,41 +41,57 @@ public class ServerConsole implements ChatIF {
   private void processCMD(String str) {
 
     if (str.equalsIgnoreCase("#quit")) {
-      System.out.println("Terminating the server.");
-      server.close();
-      System.exit(0);
+      try {
+        server.close();
+      } catch (IOException e){
+        // Nothing is done if there is an error.
+      } finally {
+        System.out.println("Terminating the server.");
+        System.exit(0);
+      }
 
     } else if (str.equalsIgnoreCase("#stop")) {
       server.stopListening();
-      server.serverStopped();
+      //server.serverStopped();
+      System.out.println("The server has stopped listening for clients.");
 
     } else if (str.equalsIgnoreCase("#close")) {
-      server.stopListening();
-      Thread[] clientThreadList = server.getClientConnections();
-      for (int i = 0; i < clientThreadList.length; i++) {
-         try {
-           ((ConnectionToClient)clientThreadList[i]).close();
-         } // Ignore all exceptions when closing clients.
-         catch(Exception ex) { }
+      try {
+        server.close();
+      } catch (IOException e){
+        // Nothing is done if there is an error.
+      } finally {
+        System.out.println("The server has closed.");
       }
 
     } else if (str.contains("setport")) {
-      String[] array = str.split(" ");
-      if (array.length == 2) {
-        try{
-          server.setPort(Integer.parseInt(array[1]));
-          System.out.println("The port has now been set to " + server.getPort() + ".");
-        } catch (NumberFormatException e){
-          System.out.println("Error: port value is not an integer.");
+      if (!server.isListening() && server.getNumberOfClients() == 0){
+        String[] array = str.split(" ");
+        if (array.length == 2) {
+          try{
+            server.setPort(Integer.parseInt(array[1]));
+            System.out.println("The port has now been set to " + server.getPort() + ".");
+          } catch (NumberFormatException e){
+            System.out.println("Error: port value is not an integer.");
+          }
+        } else {
+          System.out.println("Error: Command format is incorrect.");
         }
       } else {
-        System.out.println("Error: Command format is incorrect.");
+        System.out.println("Error: The port cannot be set because the server is not closed.");
       }
 
+
     } else if (str.equalsIgnoreCase("#start")) {
+      if (server.isListening()){
+        server.listen();
+        System.out.println("The server is listening for clients.");
+      } else {
+        System.out.println("The server is already listening for clients.");
+      }
 
     } else if (str.equalsIgnoreCase("#getport")) {
-      System.out.println("The port is " + server.port());
+      System.out.println("The port is " + server.getPort());
     }
   }
 

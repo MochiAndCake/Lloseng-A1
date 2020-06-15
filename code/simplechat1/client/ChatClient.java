@@ -92,27 +92,37 @@ public class ChatClient extends AbstractClient
       this.closeConnection();
 
     } else if (str.contains("sethost")) {
-      String[] array = str.split(" ");
-      if (array.length == 2) {
-        this.setHost(array[1]);
-        System.out.println("The host has now been set to " + this.getHost() + ".");
+      if (!this.isConnected()){
+        String[] array = str.split(" ");
+        if (array.length == 2) {
+          this.setHost(array[1]);
+          System.out.println("The host has now been set to " + this.getHost() + ".");
+        } else {
+          System.out.println("Error: Command format is incorrect.");
+        }
       } else {
-        System.out.println("Error: Command format is incorrect.");
+        System.out.println("Error: The host cannot be set because the client is still connected to the server.");
       }
 
+
     } else if (str.contains("setport")) {
-      String[] array = str.split(" ");
-      if (array.length == 2) {
-        try{
-          this.setPort(Integer.parseInt(array[1]));
-          System.out.println("The port has now been set to " + this.getPort() + ".");
-        }
-        catch (NumberFormatException e) {
-          System.out.println("Error: Port value is not an integer.");
+      if (!this.isConnected()) {
+        String[] array = str.split(" ");
+        if (array.length == 2) {
+          try{
+            this.setPort(Integer.parseInt(array[1]));
+            System.out.println("The port has now been set to " + this.getPort() + ".");
+          }
+          catch (NumberFormatException e) {
+            System.out.println("Error: Port value is not an integer.");
+          }
+        } else {
+          System.out.println("Error: Command format is incorrect.");
         }
       } else {
-        System.out.println("Error: Command format is incorrect.");
+        System.out.println("Error: The host cannot be set because the client is still connected to the server.");
       }
+
 
     } else if (str.equalsIgnoreCase("#login")) {
       if (this.isConnected()) {
