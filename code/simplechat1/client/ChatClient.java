@@ -130,6 +130,11 @@ public class ChatClient extends AbstractClient
       } else {
         System.out.println("Logging in to the server.");
         this.openConnection();
+        if (this.isConnected()){
+          System.out.println("The login was successful.");
+        } else {
+          System.out.println("The login was unsuccessful.");
+        }
       }
 
     } else if (str.equalsIgnoreCase("#gethost")) {
@@ -164,12 +169,13 @@ public class ChatClient extends AbstractClient
 
   public void connectionException(Exception exception) {
     //System.out.println(exception.toString());
-    if (exception instanceof java.net.SocketException) {
+    /*if (exception instanceof java.net.SocketException) {
       System.out.println("The server has shut down.");
     }
     else {
       System.out.println("Error.");
-    }
+    }*/
+    System.out.println("The server has shut down.");
     this.quit();
   }
 }

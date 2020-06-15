@@ -83,15 +83,23 @@ public class ServerConsole implements ChatIF {
 
 
     } else if (str.equalsIgnoreCase("#start")) {
-      if (server.isListening()){
-        server.listen();
-        System.out.println("The server is listening for clients.");
+      if (!server.isListening()){
+        try {
+          server.listen();
+          System.out.println("The server is listening for clients.");
+        } catch (IOException e){
+          System.out.println("An IO Exception occured.");
+        }
+
       } else {
         System.out.println("The server is already listening for clients.");
       }
 
     } else if (str.equalsIgnoreCase("#getport")) {
       System.out.println("The port is " + server.getPort());
+
+    } else {
+      System.out.println("The command was not recognized.");
     }
   }
 
