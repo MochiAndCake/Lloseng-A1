@@ -24,11 +24,58 @@ public class ServerConsole implements ChatIF {
 
       while (true) {
         message = fromConsole.readLine();
-        server.sendToAllClients("SERVER MSG>" + message);
+
+        String str = message.trim();
+        if (str.charAt(0) == '#') {
+          processCMD(str);
+        } else {
+          server.sendToAllClients("SERVER MSG> " + message);
+        }
       }
     } catch (Exception ex) {
       System.out.println
         ("Unexpected error while reading from console!");
+    }
+  }
+
+  private void processCMD(String str) {
+
+    if (str.equalsIgnoreCase("#quit")) {
+      System.out.println("Terminating the server.");
+      server.close();
+      System.exit(0);
+
+    } else if (str.equalsIgnoreCase("#stop")) {
+      server.stopListening();
+      server.serverStopped();
+
+    } else if (str.equalsIgnoreCase("#close")) {
+      server.stopListening();
+      Thread[] clientThreadList = server.getClientConnections();
+      for (int i = 0; i < clientThreadList.length; i++) {
+         try {
+           ((ConnectionToClient)clientThreadList[i]).close();
+         } // Ignore all exceptions when closing clients.
+         catch(Exception ex) { }
+      }
+
+    } else if (str.contains("setport")) {
+      String[] array = str.split(" ");
+      if (array.length == 2) {
+        try{
+          server.setPort(Integer.parseInt(array[1]));
+          System.out.println("The port has now been set to " + server.getPort() + ".");
+        } catch (NumberFormatException e){
+          System.out.println("Error: port value is not an integer.");
+        }
+      } else {
+        System.out.println("Error: Command format is incorrect.");
+      }
+
+    } else if (str.equalsIgnoreCase("#start")) {
+
+    } else if (str.equalsIgnoreCase("#getport")) {
+      System.out.println("The port is " + server.port());
     }
   }
 

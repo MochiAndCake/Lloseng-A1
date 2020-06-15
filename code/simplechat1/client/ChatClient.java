@@ -107,7 +107,7 @@ public class ChatClient extends AbstractClient
           this.setPort(Integer.parseInt(array[1]));
           System.out.println("The port has now been set to " + this.getPort() + ".");
         }
-        catch(NumberFormatException e){
+        catch (NumberFormatException e) {
           System.out.println("Error: Port value is not an integer.");
         }
       } else {
