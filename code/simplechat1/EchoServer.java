@@ -24,7 +24,7 @@ public class EchoServer extends AbstractServer
    */
   final public static int DEFAULT_PORT = 5555;
 
-  private ServerConsole serverUI;
+  private ChatIF serverUI;
 
   //Constructors ****************************************************
 
@@ -127,11 +127,14 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
-  {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+  public void handleMessageFromClient(Object msg, ConnectionToClient client){
+    if(msg.contains("#login")){
+      String[] split = msg.trim().split(" ");
+      client.setInfo("ID", split[1]);
+    } else {
+      System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + client);
+      this.sendToAllClients(msg);
+    }
   }
 
   /**

@@ -105,9 +105,9 @@ public class ChatClient extends AbstractClient
 
     } else if (str.contains("sethost")) {
       if (!this.isConnected()){
-        String[] array = str.split(" ");
-        if (array.length == 2) {
-          this.setHost(array[1]);
+        String[] split = str.split(" ");
+        if (split.length == 2) {
+          this.setHost(split[1]);
           System.out.println("The host has now been set to " + this.getHost() + ".");
         } else {
           System.out.println("Error: Command format is incorrect.");
@@ -119,10 +119,10 @@ public class ChatClient extends AbstractClient
 
     } else if (str.contains("setport")) {
       if (!this.isConnected()) {
-        String[] array = str.split(" ");
-        if (array.length == 2) {
+        String[] split = str.split(" ");
+        if (split.length == 2) {
           try{
-            this.setPort(Integer.parseInt(array[1]));
+            this.setPort(Integer.parseInt(split[1]));
             System.out.println("The port has now been set to " + this.getPort() + ".");
           }
           catch (NumberFormatException e) {

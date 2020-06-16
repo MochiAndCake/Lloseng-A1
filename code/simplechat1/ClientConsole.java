@@ -102,7 +102,7 @@ public class ClientConsole implements ChatIF
    *
    * @param args[0] The host to connect to.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args){
     String host = "";
     int port = 0;  //The port number
     String id = "";
@@ -124,11 +124,13 @@ public class ClientConsole implements ChatIF
         }
       }
 
+      // If there was no host given, then it is set to the default
       if (host.equalsIgnoreCase("")){
         host = "localhost";
       }
-      if (port == 0) {
-        port = DEFAULT_PORT;
+      if (port < 1  && port > 99999){
+        // According to the professor, a port is limited to 1 to 5 digits.
+        port = DEFAULT_PORT; // If the port is not a valid number, it is set to the default value.
       }
 
       ClientConsole chat= new ClientConsole(id, host, port);
