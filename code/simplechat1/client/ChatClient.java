@@ -48,11 +48,14 @@ public class ChatClient extends AbstractClient
     openConnection();
   }
 
-  public ChatClient(int id, String host, int port, ChatIF clientUI) throws IOException {
+  public ChatClient(String id, String host, int port, ChatIF clientUI) throws IOException {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     this.id = id;
     openConnection();
+    if(isConnected()){
+      sendToServer("#login " + id);
+    }
   }
 
 
@@ -141,6 +144,7 @@ public class ChatClient extends AbstractClient
         this.openConnection();
         if (this.isConnected()){
           System.out.println("The login was successful.");
+          sendToServer("#login " + id);
         } else {
           System.out.println("The login was unsuccessful.");
         }

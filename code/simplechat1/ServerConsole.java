@@ -8,8 +8,9 @@ public class ServerConsole implements ChatIF {
   private EchoServer server;
 
   public ServerConsole(int port) {
+    server = new EchoServer(port, this);
     try {
-      server = new EchoServer(port, this);
+
       server.listen(); //Start listening for connections
     } catch (Exception ex) {
       System.out.println("ERROR - Could not listen for clients!");

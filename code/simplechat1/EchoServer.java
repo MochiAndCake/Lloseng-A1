@@ -52,6 +52,7 @@ public class EchoServer extends AbstractServer
       processCMD(str);
     } else {
       this.sendToAllClients("SERVER MSG> " + message);
+      this.display(message);
     }
   }
 

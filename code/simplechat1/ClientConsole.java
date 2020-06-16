@@ -45,7 +45,7 @@ public class ClientConsole implements ChatIF
   {
     try
     {
-      client= new ChatClient(id, host, port, this);
+      client = new ChatClient(id, host, port, this);
     }
     catch(IOException exception)
     {
@@ -105,10 +105,12 @@ public class ClientConsole implements ChatIF
   public static void main(String[] args) {
     String host = "";
     int port = 0;  //The port number
-    int id = 0;
+    String id = "";
 
     try {
-      id = Integer.parseInt(args[0]);
+      if (args[0].equalsIgnoreCase("-p") || args[0].equalsIgnoreCase("-h")){
+        throw new Exception();
+      }
 
       if(args.length == 0 || args.length > 5 || (args.length % 2) == 0){
         throw new ArrayIndexOutOfBoundsException();
@@ -133,11 +135,14 @@ public class ClientConsole implements ChatIF
       chat.accept();  //Wait for console data
 
     } catch(ArrayIndexOutOfBoundsException e1) {
-      System.out.println("Error: Number of arguments was incorrect.");
-      System.exit(0);
+      System.out.println("ERROR - No login ID specified.  Connection aborted.");
+      System.exit(1);
     } catch(NumberFormatException e2) {
       System.out.println("Error: Input format was incorrect.");
-      System.exit(0);
+      System.exit(1);
+    } catch(Exception e) {
+      System.out.println("ERROR - Input format is incorrect.");
+      System.exit(1);
     }
   }
 }
