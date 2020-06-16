@@ -27,6 +27,8 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI;
 
+  int id;
+
 
   //Constructors ****************************************************
 
@@ -43,6 +45,13 @@ public class ChatClient extends AbstractClient
   {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
+    openConnection();
+  }
+
+  public ChatClient(int id, String host, int port, ChatIF clientUI) throws IOException {
+    super(host, port); //Call the superclass constructor
+    this.clientUI = clientUI;
+    this.id = id;
     openConnection();
   }
 

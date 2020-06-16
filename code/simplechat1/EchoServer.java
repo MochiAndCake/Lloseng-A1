@@ -24,6 +24,8 @@ public class EchoServer extends AbstractServer
    */
   final public static int DEFAULT_PORT = 5555;
 
+  private ServerConsole serverUI;
+
   //Constructors ****************************************************
 
   /**
@@ -36,8 +38,87 @@ public class EchoServer extends AbstractServer
     super(port);
   }
 
+  public EchoServer(int port, ServerConsole serverUI){
+    super(port);
+    this.serverUI = serverUI;
+  }
+
 
   //Instance methods ************************************************
+
+  public void handleMessageFromServerUI(String message) {
+    String str = message.trim();
+    if (str.charAt(0) == '#') {
+      processCMD(str);
+    } else {
+      this.sendToAllClients("SERVER MSG> " + message);
+    }
+  }
+
+  private void processCMD(String str) {
+
+    if (str.equalsIgnoreCase("#quit")) {
+      try {
+        this.close();
+      } catch (IOException e){
+        // Nothing is done if there is an error.
+      } finally {
+        System.out.println("Terminating the server.");
+        System.exit(0);
+      }
+
+    } else if (str.equalsIgnoreCase("#stop")) {
+      this.stopListening();
+      //server.serverStopped();
+      System.out.println("The server has stopped listening for clients.");
+
+    } else if (str.equalsIgnoreCase("#close")) {
+      try {
+        this.close();
+      } catch (IOException e){
+        // Nothing is done if there is an error.
+      } finally {
+        System.out.println("The server has closed.");
+      }
+
+    } else if (str.contains("setport")) {
+      if (!this.isListening() && this.getNumberOfClients() == 0){
+        String[] array = str.split(" ");
+        if (array.length == 2) {
+          try{
+            this.setPort(Integer.parseInt(array[1]));
+            System.out.println("The port has now been set to " + this.getPort() + ".");
+          } catch (NumberFormatException e){
+            System.out.println("Error: port value is not an integer.");
+          }
+        } else {
+          System.out.println("Error: Command format is incorrect.");
+        }
+      } else {
+        System.out.println("Error: The port cannot be set because the server is not closed.");
+      }
+
+
+    } else if (str.equalsIgnoreCase("#start")) {
+      if (!this.isListening()){
+        try {
+          this.listen();
+          System.out.println("The server is listening for clients.");
+        } catch (IOException e){
+          System.out.println("An IO Exception occured.");
+        }
+
+      } else {
+        System.out.println("The server is already listening for clients.");
+      }
+
+    } else if (str.equalsIgnoreCase("#getport")) {
+      System.out.println("The port is " + this.getPort() + ".");
+
+    } else {
+      System.out.println("The command was not recognized.");
+    }
+  }
 
   /**
    * This method handles any messages received from the client.

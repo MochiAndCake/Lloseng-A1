@@ -3,17 +3,17 @@ import common.*;
 
 public class ServerConsole implements ChatIF {
 
-  final public static int DEFAULT_PORT = 5555;
+  final private static int DEFAULT_PORT = 5555;
 
-  EchoServer server;
+  private EchoServer server;
 
   public ServerConsole(int port) {
-    server = new EchoServer(port);
-
     try {
+      server = new EchoServer(port, this);
       server.listen(); //Start listening for connections
     } catch (Exception ex) {
       System.out.println("ERROR - Could not listen for clients!");
+      System.exit(1);
     }
   }
 
@@ -24,82 +24,11 @@ public class ServerConsole implements ChatIF {
 
       while (true) {
         message = fromConsole.readLine();
-
-        String str = message.trim();
-        if (str.charAt(0) == '#') {
-          processCMD(str);
-        } else {
-          server.sendToAllClients("SERVER MSG> " + message);
-        }
+        server.handleMessageFromServerUI(message);
       }
     } catch (Exception ex) {
       System.out.println
         ("Unexpected error while reading from console!");
-    }
-  }
-
-  private void processCMD(String str) {
-
-    if (str.equalsIgnoreCase("#quit")) {
-      try {
-        server.close();
-      } catch (IOException e){
-        // Nothing is done if there is an error.
-      } finally {
-        System.out.println("Terminating the server.");
-        System.exit(0);
-      }
-
-    } else if (str.equalsIgnoreCase("#stop")) {
-      server.stopListening();
-      //server.serverStopped();
-      System.out.println("The server has stopped listening for clients.");
-
-    } else if (str.equalsIgnoreCase("#close")) {
-      try {
-        server.close();
-      } catch (IOException e){
-        // Nothing is done if there is an error.
-      } finally {
-        System.out.println("The server has closed.");
-      }
-
-    } else if (str.contains("setport")) {
-      if (!server.isListening() && server.getNumberOfClients() == 0){
-        String[] array = str.split(" ");
-        if (array.length == 2) {
-          try{
-            server.setPort(Integer.parseInt(array[1]));
-            System.out.println("The port has now been set to " + server.getPort() + ".");
-          } catch (NumberFormatException e){
-            System.out.println("Error: port value is not an integer.");
-          }
-        } else {
-          System.out.println("Error: Command format is incorrect.");
-        }
-      } else {
-        System.out.println("Error: The port cannot be set because the server is not closed.");
-      }
-
-
-    } else if (str.equalsIgnoreCase("#start")) {
-      if (!server.isListening()){
-        try {
-          server.listen();
-          System.out.println("The server is listening for clients.");
-        } catch (IOException e){
-          System.out.println("An IO Exception occured.");
-        }
-
-      } else {
-        System.out.println("The server is already listening for clients.");
-      }
-
-    } else if (str.equalsIgnoreCase("#getport")) {
-      System.out.println("The port is " + server.getPort());
-
-    } else {
-      System.out.println("The command was not recognized.");
     }
   }
 
