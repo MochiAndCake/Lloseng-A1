@@ -54,8 +54,8 @@ public class ChatClient extends AbstractClient
     this.id = id;
     openConnection();
     if(isConnected()){
-      System.out.println("isConnected is true, and the ID is " + this.id);
       sendToServer("#login " + this.id);
+      System.out.println(this.id + " has logged on.");
     }
   }
 
@@ -145,7 +145,6 @@ public class ChatClient extends AbstractClient
         this.openConnection();
         if (this.isConnected()){
           System.out.println("The login was successful.");
-          sendToServer("#login " + id);
         } else {
           System.out.println("The login was unsuccessful.");
         }

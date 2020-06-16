@@ -132,15 +132,39 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient(Object msg, ConnectionToClient client){
-    System.out.println(msg);
-    if (((String)msg).contains("#login")){
-      String[] split = ((String)msg).trim().split(" ");
-      client.setInfo("ID", split[1]);
-      System.out.println("Login with " + split[1]);
+  public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+    // When the client first connects, they will have no ID.
+    if (client.getInfo("ID") == null){
+      // Then their first message to server should be their ID.
+      if ( ((String)msg).contains("#login") ){
+        String[] split = ((String)msg).trim().split(" ");
+        client.setInfo("ID", split[1]);
+
+      } else { // Otherwise, it is an error.
+        try {
+          // The server will send an error message to the client.
+          // The server will then terminate the connection to the client.
+          client.sendToClient("ERROR - Missing client ID.");
+          client.close();
+        } catch (IOException e1){
+          System.out.println("ERROR - Could not send message to client.");
+        }
+
+      }
     } else {
-      System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + " at " + client);
-      this.sendToAllClients(msg);
+      // If this is not the client's first time connecting, they cannot login again.
+      if ( ((String)msg).contains("#login") ){
+        try {
+          client.sendToClient("ERROR - Login can can only be used when the client first connects.");
+        } catch (IOException e1){
+          System.out.println("ERROR - Could not send message to client.");
+        }
+
+      } else {
+        // Otherwise, the message is relayed to all with the client ID.
+        System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + " at " + client);
+        this.sendToAllClients(msg);
+      }
     }
   }
 

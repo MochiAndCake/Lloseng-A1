@@ -41,17 +41,13 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String id, String host, int port)
-  {
-    try
-    {
+  public ClientConsole(String id, String host, int port) {
+    try {
       client = new ChatClient(id, host, port, this);
-    }
-    catch(IOException exception)
-    {
-      System.out.println("Error: Can't setup connection!"
-                + " Terminating client.");
-      System.exit(1);
+    } catch(IOException exception) {
+      //System.out.println("Error: Can't setup connection!" + " Terminating client.");
+      //System.exit(1);
+      System.out.println("Cannot open connection. Awaiting command.");
     }
   }
 
