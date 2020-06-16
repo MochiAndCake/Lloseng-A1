@@ -41,7 +41,7 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(int id, String host, int port)
+  public ClientConsole(String id, String host, int port)
   {
     try
     {
@@ -110,6 +110,8 @@ public class ClientConsole implements ChatIF
     try {
       if (args[0].equalsIgnoreCase("-p") || args[0].equalsIgnoreCase("-h")){
         throw new Exception();
+      } else {
+        id = args[0];
       }
 
       if(args.length == 0 || args.length > 5 || (args.length % 2) == 0){
@@ -133,7 +135,7 @@ public class ClientConsole implements ChatIF
         port = DEFAULT_PORT; // If the port is not a valid number, it is set to the default value.
       }
 
-      ClientConsole chat= new ClientConsole(id, host, port);
+      ClientConsole chat = new ClientConsole(id, host, port);
       chat.accept();  //Wait for console data
 
     } catch(ArrayIndexOutOfBoundsException e1) {

@@ -27,7 +27,7 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI;
 
-  int id;
+  private String id;
 
 
   //Constructors ****************************************************
@@ -54,7 +54,8 @@ public class ChatClient extends AbstractClient
     this.id = id;
     openConnection();
     if(isConnected()){
-      sendToServer("#login " + id);
+      System.out.println("isConnected is true, and the ID is " + this.id);
+      sendToServer("#login " + this.id);
     }
   }
 

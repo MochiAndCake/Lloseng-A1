@@ -24,7 +24,12 @@ public class EchoServer extends AbstractServer
    */
   final public static int DEFAULT_PORT = 5555;
 
-  private ChatIF serverUI;
+  /**
+   * The server UI.
+   * It could have been declared as a ChatIF, but then EchoServer needs
+   * to implement the common package.
+   */
+  private ServerConsole serverUI;
 
   //Constructors ****************************************************
 
@@ -52,7 +57,7 @@ public class EchoServer extends AbstractServer
       processCMD(str);
     } else {
       this.sendToAllClients("SERVER MSG> " + message);
-      this.display(message);
+      serverUI.display(message);
     }
   }
 
@@ -128,11 +133,13 @@ public class EchoServer extends AbstractServer
    * @param client The connection from which the message originated.
    */
   public void handleMessageFromClient(Object msg, ConnectionToClient client){
-    if(msg.contains("#login")){
-      String[] split = msg.trim().split(" ");
+    System.out.println(msg);
+    if (((String)msg).contains("#login")){
+      String[] split = ((String)msg).trim().split(" ");
       client.setInfo("ID", split[1]);
+      System.out.println("Login with " + split[1]);
     } else {
-      System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + client);
+      System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + " at " + client);
       this.sendToAllClients(msg);
     }
   }
