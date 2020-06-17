@@ -74,6 +74,7 @@ public class EchoServer extends AbstractServer
 
     if (command.equalsIgnoreCase("#quit")) {
       try { // Attempt to close the server and its connections.
+        this.stopListening();
         this.close();
         System.out.println("Terminating the program.");
         System.exit(0); // The server terminates gracefully.
