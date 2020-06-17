@@ -13,11 +13,12 @@ import ocsf.server.*;
  * @author Dr Robert Lagani&egrave;re
  * @author Fran&ccedil;ois B&eacute;langer
  * @author Paul Holden
- * @version July 2000
+ * @author Ann Soong (For Assignment 1)
+ * @version June 2020
  */
 public class EchoServer extends AbstractServer
 {
-  //Class variables *************************************************
+  //Variables *******************************************************
 
   /**
    * The default port to listen on.
@@ -54,75 +55,91 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromServerUI(String message) {
     String str = message.trim();
     if (str.charAt(0) == '#') {
+      // If the message starts with "#", then it's a command.
+      // Process the command using the helper function.
       processCMD(str);
-    } else {
-      this.sendToAllClients("SERVER MSG> " + message);
+    } else { // Otherwise, it is a message to send echo to clients.
+      this.sendToAllClients("SERVER MESSAGE> " + message);
       serverUI.display(message);
     }
   }
 
-  private void processCMD(String str) {
+  /**
+   * A private helper method used to process command strings recieved
+   * from the Server UI.
+   *
+   * @param command The string command recieved
+   */
+  private void processCMD(String command) {
 
-    if (str.equalsIgnoreCase("#quit")) {
-      try {
+    if (command.equalsIgnoreCase("#quit")) {
+      try { // Attempt to close the server and its connections.
         this.close();
+        System.out.println("Terminating the program.");
+        System.exit(0); // The server terminates gracefully.
       } catch (IOException e){
-        // Nothing is done if there is an error.
-      } finally {
-        System.out.println("Terminating the server.");
-        System.exit(0);
+        System.out.println("ERROR - Server quit was unsuccessful.");
       }
 
-    } else if (str.equalsIgnoreCase("#stop")) {
+    } else if (command.equalsIgnoreCase("#stop")) {
+      // The server stops listening for clients.
       this.stopListening();
-      //server.serverStopped();
-      System.out.println("The server has stopped listening for clients.");
 
-    } else if (str.equalsIgnoreCase("#close")) {
-      try {
+    } else if (command.equalsIgnoreCase("#close")) {
+      try { // Attempt to close the server and its connections.
         this.close();
-      } catch (IOException e){
-        // Nothing is done if there is an error.
-      } finally {
         System.out.println("The server has closed.");
+      } catch (IOException e){
+        System.out.println("ERROR - Server close was unsuccessful.");
       }
 
-    } else if (str.contains("setport")) {
+    } else if (command.contains("setport")) {
+      // The server can only set its port if it is closed.
+      // That means the server is not listening for clients and has
+      // disconnected from all clients.
       if (!this.isListening() && this.getNumberOfClients() == 0){
-        String[] array = str.split(" ");
+        String[] array = command.split(" ");
+        // There should only be 2 parts to the command: "#setport" and <port>
         if (array.length == 2) {
           try{
-            this.setPort(Integer.parseInt(array[1]));
-            System.out.println("The port has now been set to " + this.getPort() + ".");
+            // We attempt to parse the port into an integer.
+            int newport = Integer.parseInt(array[1]);
+
+            // The port should only be 1 to 5 digits long.
+            if(newport < 1 || newport > 99999){
+              System.out.println("ERROR - Port number is out of bounds.");
+
+            } else { // Otherwise, the port is succesfully set.
+              this.setPort(newport);
+              System.out.println("The port has now been set to " + this.getPort() + ".");
+            }
           } catch (NumberFormatException e){
-            System.out.println("Error: port value is not an integer.");
+            // If the port can't be parsed into an integer, then it is an error.
+            System.out.println("ERROR - Given port value is not an integer.");
           }
-        } else {
-          System.out.println("Error: Command format is incorrect.");
+        } else { // If the command exceeded 2 parts, then it is incorrect.
+          System.out.println("ERROR - Command format is incorrect.");
         }
-      } else {
-        System.out.println("Error: The port cannot be set because the server is not closed.");
+      } else { // Command cannot be used if server is not closed.
+        System.out.println("ERROR - The server is not closed.");
       }
 
-
-    } else if (str.equalsIgnoreCase("#start")) {
+    } else if (command.equalsIgnoreCase("#start")) {
+      // Server can only be started if it's been stopped.
       if (!this.isListening()){
         try {
           this.listen();
-          System.out.println("The server is listening for clients.");
+          System.out.println("The server is listening for new clients.");
         } catch (IOException e){
-          System.out.println("An IO Exception occured.");
+          System.out.println("ERROR - Server was unable to start.");
         }
-
       } else {
-        System.out.println("The server is already listening for clients.");
+        System.out.println("ERROR - Server is already listening for clients.");
       }
 
-    } else if (str.equalsIgnoreCase("#getport")) {
+    } else if (command.equalsIgnoreCase("#getport")) {
       System.out.println("The port is " + this.getPort() + ".");
 
-    } else {
-      System.out.println("The command was not recognized.");
     }
   }
 
@@ -140,7 +157,10 @@ public class EchoServer extends AbstractServer
         String[] split = ((String)msg).trim().split(" ");
         client.setInfo("ID", split[1]);
 
-      } else { // Otherwise, it is an error.
+        // We notify the Server user that the client has successfully logged in.
+        System.out.println(client.getInfo("ID") + " has logged on.");
+
+      } else {
         try {
           // The server will send an error message to the client.
           // The server will then terminate the connection to the client.
@@ -149,8 +169,8 @@ public class EchoServer extends AbstractServer
         } catch (IOException e1){
           System.out.println("ERROR - Could not send message to client.");
         }
-
       }
+
     } else {
       // If this is not the client's first time connecting, they cannot login again.
       if ( ((String)msg).contains("#login") ){
@@ -162,8 +182,9 @@ public class EchoServer extends AbstractServer
 
       } else {
         // Otherwise, the message is relayed to all with the client ID.
-        System.out.println("Message received: " + msg + " from " + client.getInfo("ID") + " at " + client);
-        this.sendToAllClients(msg);
+        // Server prints the message: "Message received: <user input> from <loginID>"
+        System.out.println("Message received: " + msg + " from " + client.getInfo("ID"));
+        this.sendToAllClients(client.getInfo("ID") + "> " + msg);
       }
     }
   }
@@ -194,7 +215,8 @@ public class EchoServer extends AbstractServer
    * @param client the connection connected to the client.
    */
   protected void clientConnected(ConnectionToClient client) {
-    System.out.println("Welcome!");
+    // A nice message is printed when a client connects to server.
+    System.out.println("A new client has connected. Welcome!");
   }
 
   /**
@@ -205,7 +227,8 @@ public class EchoServer extends AbstractServer
    * @param client the connection with the client.
    */
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-    System.out.println("Have a nice day!");
+    // A nice message is printed when a client disconnects from server.
+    System.out.println("A client has disconnected. Have a nice day!");
   }
 
   /**
@@ -218,7 +241,7 @@ public class EchoServer extends AbstractServer
    * @param Throwable the exception thrown.
    */
   synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
-    System.out.println("Have a nice day!");
+    System.out.println("There was a connection exception.");
   }
 
   //Class methods ***************************************************
