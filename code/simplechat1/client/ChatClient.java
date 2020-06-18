@@ -50,12 +50,6 @@ public class ChatClient extends AbstractClient
     this.id = id;
     try {
       openConnection();
-      if(isConnected()){
-        // If the client connects to the server, then send login ID.
-        sendToServer("#login " + this.id);
-        // Notifies the user that ChatClient is now logged on.
-        System.out.println(this.id + " has logged on.");
-      }
     } catch (IOException e) {
       System.out.println("Cannot open connection. Awaiting command.");
     }
@@ -106,13 +100,11 @@ public class ChatClient extends AbstractClient
   private void processCMD(String command) {
 
     if (command.equalsIgnoreCase("#quit")) {
-      System.out.println("Terminating the program.");
       this.quit();
 
     } else if (command.equalsIgnoreCase("#logoff")) {
       try { // Attempt to close client's connection.
         this.closeConnection();
-        System.out.println("Logged off the server.");
       } catch (IOException e1){
         System.out.println("ERROR - Client close was unsuccessful.");
       }
@@ -124,7 +116,7 @@ public class ChatClient extends AbstractClient
         // There should only be 2 parts to the command: "#sethost" and <host>
         if (array.length == 2) {
           this.setHost(array[1]);
-          System.out.println("The host has now been set to " + this.getHost() + ".");
+          System.out.println("Host set to: " + this.getHost() + ".");
         } else { // If the command exceeded 2 parts, then it is incorrect.
           System.out.println("ERROR - Command format is incorrect.");
         }
@@ -148,7 +140,7 @@ public class ChatClient extends AbstractClient
 
             } else { // Otherwise, the port is succesfully set.
               this.setPort(newport);
-              System.out.println("The port has now been set to " + this.getPort() + ".");
+              System.out.println("Port set to: " + this.getPort() + ".");
             }
           }
           catch (NumberFormatException e) {
@@ -169,14 +161,6 @@ public class ChatClient extends AbstractClient
       } else {
         try {
           this.openConnection();
-          if (this.isConnected()){
-            // If the client connects to the server, then send login ID.
-            sendToServer("#login " + this.id);
-            // Notifies the user that ChatClient is now logged on.
-            System.out.println(this.id + " has logged on.");
-          } else {
-            System.out.println("The login was unsuccessful.");
-          }
         } catch (IOException e2) {
           System.out.println("ERROR - Client was unable to login.");
         }
@@ -210,8 +194,22 @@ public class ChatClient extends AbstractClient
 	 * This method is called after the connection has been closed.
 	 */
   public void connectionClosed() {
-    System.out.println("The connection to the server has closed.");
+    System.out.println("Connection closed.");
   }
+
+  /**
+	 * This method is called after a connection has been established.
+	 */
+	protected void connectionEstablished() {
+    try {
+      // If the client connects to the server, then send login ID.
+      sendToServer("#login " + this.id);
+      // Notifies the user that ChatClient is now logged on.
+      System.out.println(this.id + " has logged on.");
+    } catch (IOException e) {
+      System.out.println("Cannot open connection. Awaiting command.");
+    }
+	}
 
   /**
 	 * This method is called each time an exception is thrown by the client's
@@ -220,15 +218,8 @@ public class ChatClient extends AbstractClient
 	 * @param exception the exception raised.
 	 */
   public void connectionException(Exception exception) {
-    //System.out.println(exception.toString());
-    /*if (exception instanceof java.net.SocketException) {
-      System.out.println("The server has shut down.");
-    }
-    else {
-      System.out.println("Error.");
-    }*/
-    System.out.println("There was a connection exception.");
-    this.quit();
+    System.out.println("Abnormal termination of connection.");
+    //this.quit();
   }
 }
 //End of ChatClient class
