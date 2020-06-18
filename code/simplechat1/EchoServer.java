@@ -75,6 +75,7 @@ public class EchoServer extends AbstractServer
     if (command.equalsIgnoreCase("#quit")) {
       try { // Attempt to close the server and its connections.
         this.close();
+        System.out.println("Terminating the program.");
         System.exit(0); // The server terminates gracefully.
       } catch (IOException e){
         System.out.println("ERROR - Server quit was unsuccessful.");
@@ -86,8 +87,8 @@ public class EchoServer extends AbstractServer
 
     } else if (command.equalsIgnoreCase("#close")) {
       try { // Attempt to close the server and its connections.
-        this.sendToAllClients("SERVER SHUTTING DOWN! DISCONNECTING!");
         this.close();
+        System.out.println("The server has closed.");
       } catch (IOException e){
         System.out.println("ERROR - Server close was unsuccessful.");
       }
@@ -110,7 +111,7 @@ public class EchoServer extends AbstractServer
 
             } else { // Otherwise, the port is succesfully set.
               this.setPort(newport);
-              System.out.println("Port set to: " + this.getPort() + ".");
+              System.out.println("The port has now been set to " + this.getPort() + ".");
             }
           } catch (NumberFormatException e){
             // If the port can't be parsed into an integer, then it is an error.
@@ -192,48 +193,55 @@ public class EchoServer extends AbstractServer
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.
    */
-  protected void serverStarted() {
-    System.out.println("Server listening for connections on port " + getPort());
+  protected void serverStarted()
+  {
+    System.out.println
+      ("Server listening for connections on port " + getPort());
   }
 
   /**
    * This method overrides the one in the superclass.  Called
    * when the server stops listening for connections.
    */
-  protected void serverStopped() {
-    this.sendToAllClients("WARNING - Server has stopped listening for connections.");
-    System.out.println("Server has stopped listening for connections.");
+  protected void serverStopped()
+  {
+    System.out.println
+      ("Server has stopped listening for connections.");
   }
 
   /**
-   * This method is called each time a new client connection is
-   * accepted.
+   * Hook method called each time a new client connection is
+   * accepted. The default implementation does nothing.
    * @param client the connection connected to the client.
    */
   protected void clientConnected(ConnectionToClient client) {
     // A nice message is printed when a client connects to server.
-    System.out.println("A client has connected. Welcome!");
+    System.out.println("A new client has connected. Welcome!");
   }
 
   /**
-   * This method is called each time a client disconnects.
+   * Hook method called each time a client disconnects.
+   * The default implementation does nothing. The method
+   * may be overridden by subclasses but should remains synchronized.
    *
    * @param client the connection with the client.
    */
   synchronized protected void clientDisconnected(ConnectionToClient client) {
     // A nice message is printed when a client disconnects from server.
-    System.out.println(client.getInfo("ID") + " has disconnected. Have a nice day!");
+    System.out.println("A client has disconnected. Have a nice day!");
   }
 
   /**
-   * This method called each time an exception is thrown in a
+   * Hook method called each time an exception is thrown in a
    * ConnectionToClient thread.
+   * The method may be overridden by subclasses but should remains
+   * synchronized.
    *
    * @param client the client that raised the exception.
    * @param Throwable the exception thrown.
    */
   synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
-    System.out.println(client.getInfo("ID") + " has disconnected. Have a nice day!");
+    System.out.println("There was a connection exception.");
   }
 
   //Class methods ***************************************************
