@@ -17,8 +17,7 @@ import common.*;
  * @author Ann Soong (For Assignment 1)
  * @version June 2020
  */
-public class ClientConsole implements ChatIF
-{
+public class ClientConsole implements ChatIF {
   //Class variables *************************************************
 
   /**
@@ -58,24 +57,17 @@ public class ClientConsole implements ChatIF
    * This method waits for input from the console.  Once it is
    * received, it sends it to the client's message handler.
    */
-  public void accept()
-  {
-    try
-    {
-      BufferedReader fromConsole =
-        new BufferedReader(new InputStreamReader(System.in));
+  public void accept() {
+    try {
+      BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
       String message;
 
-      while (true)
-      {
+      while (true) {
         message = fromConsole.readLine();
         client.handleMessageFromClientUI(message);
       }
-    }
-    catch (Exception ex)
-    {
-      System.out.println
-        ("Unexpected error while reading from console!");
+    } catch (Exception ex) {
+      System.out.println("Unexpected error while reading from console!");
     }
   }
 
@@ -85,8 +77,7 @@ public class ClientConsole implements ChatIF
    *
    * @param message The string to be displayed.
    */
-  public void display(String message)
-  {
+  public void display(String message) {
       System.out.println(message);
   }
 

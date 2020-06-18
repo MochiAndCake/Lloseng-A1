@@ -18,8 +18,7 @@ import java.io.*;
  * @author Ann Soong (For Assignment 1)
  * @version June 2020
  */
-public class ChatClient extends AbstractClient
-{
+public class ChatClient extends AbstractClient {
   //Variables *******************************************************
 
   /**
@@ -64,8 +63,7 @@ public class ChatClient extends AbstractClient
    *
    * @param msg The message from the server.
    */
-  public void handleMessageFromServer(Object msg)
-  {
+  public void handleMessageFromServer(Object msg) {
     clientUI.display(msg.toString());
   }
 
@@ -180,10 +178,8 @@ public class ChatClient extends AbstractClient
   /**
    * This method terminates the client.
    */
-  public void quit()
-  {
-    try
-    {
+  public void quit() {
+    try {
       closeConnection();
     }
     catch(IOException e) {}

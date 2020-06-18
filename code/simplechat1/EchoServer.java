@@ -16,8 +16,7 @@ import ocsf.server.*;
  * @author Ann Soong (For Assignment 1)
  * @version June 2020
  */
-public class EchoServer extends AbstractServer
-{
+public class EchoServer extends AbstractServer {
   //Variables *******************************************************
 
   /**
@@ -39,12 +38,11 @@ public class EchoServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public EchoServer(int port)
-  {
+  public EchoServer(int port) {
     super(port);
   }
 
-  public EchoServer(int port, ServerConsole serverUI){
+  public EchoServer(int port, ServerConsole serverUI) {
     super(port);
     this.serverUI = serverUI;
   }
